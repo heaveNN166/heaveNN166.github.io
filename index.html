@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wartune Skill Calculator</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Roboto:wght@400;700&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <div class="app-container">
+        <header>
+            <h1>Wartune Skill Calculator</h1>
+        </header>
+
+
+        <!-- Top Ad Banner -->
+        <div class="ad-container ad-banner-top">
+            <div class="ad-placeholder">
+                <span>Reklam Alanı (728x90)</span>
+                <!-- Google AdSense Kodu Buraya Gelecek -->
+            </div>
+        </div>
+
+        <div class="content-wrapper">
+            <main>
+                <section id="class-selection" class="screen active">
+                    <h2>Select Your Class</h2>
+                    <div class="class-cards">
+                        <div class="card" data-class="knight">
+                            <img src="knight.png" alt="Knight">
+                            <h3>Knight</h3>
+                        </div>
+                        <div class="card" data-class="archer">
+                            <img src="archer.png" alt="Archer">
+                            <h3>Archer</h3>
+                        </div>
+                        <div class="card" data-class="mage">
+                            <img src="mage.png" alt="Mage">
+                            <h3>Mage</h3>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="calculator" class="screen hidden">
+                    <div class="controls">
+                        <button id="back-btn">← Back</button>
+                        <div class="level-control">
+                            <label for="char-level">My Level:</label>
+                            <input type="number" id="char-level" min="1" max="80" value="1">
+                        </div>
+                        <div class="points-display">
+                            Points: <span id="used-points">0</span> / <span id="total-points">0</span>
+                        </div>
+                        <button id="reset-btn">Reset Skills</button>
+                    </div>
+
+                    <div class="skill-tree-container">
+                        <div id="skill-tree" class="skill-tree">
+                            <!-- Skills will be injected here -->
+                        </div>
+                    </div>
+                </section>
+            </main>
+
+            <!-- Sidebar Ad -->
+            <aside class="ad-sidebar">
+                <div class="ad-container ad-vertical">
+                    <div class="ad-placeholder">
+                        <span>Reklam Alanı (160x600)</span>
+                        <!-- Google AdSense Kodu Buraya Gelecek -->
+                    </div>
+                </div>
+            </aside>
+        </div>
+
+        <!-- Bottom Ad Banner -->
+        <div class="ad-container ad-banner-bottom">
+            <div class="ad-placeholder">
+                <span>Reklam Alanı (728x90)</span>
+                <!-- Google AdSense Kodu Buraya Gelecek -->
+            </div>
+        </div>
+    </div>
+
+    <script src="data.js"></script>
+    <script src="script.js"></script>
+</body>
+
+</html>
