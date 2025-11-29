@@ -14,6 +14,13 @@ document.addEventListener('DOMContentLoaded', () => {
     let totalPoints = 0;
     let usedPoints = 0;
     let skillsState = {}; // { skillId: level }
+    let activeTooltipSkillId = null; // For mobile: track which skill has tooltip open
+
+    function isTouchDevice() {
+        return (('ontouchstart' in window) ||
+            (navigator.maxTouchPoints > 0) ||
+            (navigator.msMaxTouchPoints > 0));
+    }
 
     // Initialize
     classCards.forEach(card => {
@@ -44,6 +51,14 @@ document.addEventListener('DOMContentLoaded', () => {
         skillsState = {};
         updatePoints();
         renderTree();
+    });
+
+    // Global click to close tooltip on mobile
+    document.addEventListener('click', (e) => {
+        if (isTouchDevice()) {
+            hideTooltip();
+            activeTooltipSkillId = null;
+        }
     });
 
     function loadClass(className) {
@@ -81,6 +96,12 @@ document.addEventListener('DOMContentLoaded', () => {
             document.body.appendChild(tooltip);
         }
 
+        // Reset tooltip state on re-render (prevents stale info on mobile)
+        if (isTouchDevice()) {
+            tooltip.style.display = 'none';
+            activeTooltipSkillId = null;
+        }
+
         skills.forEach(skill => {
             const node = document.createElement('div');
             node.className = 'skill-node';
@@ -109,8 +130,32 @@ document.addEventListener('DOMContentLoaded', () => {
             node.appendChild(levelBadge);
 
             // Interactions
-            node.addEventListener('click', () => {
-                addPoint(skill);
+            node.addEventListener('click', (e) => {
+                // Check if it's a touch interaction (simple heuristic or state)
+                // We'll use a global flag or check event type if possible, but click fires on touch too.
+                // Better approach: Use a state to track if we are in "touch mode" or check for touch capability.
+
+                if (isTouchDevice()) {
+                    e.stopPropagation(); // Prevent document click from closing it immediately
+
+                    if (activeTooltipSkillId !== skill.id) {
+                        // First tap: Show tooltip
+                        showTooltip(e, skill, currentLevel, isLocked);
+                        activeTooltipSkillId = skill.id;
+                    } else {
+                        // Second tap: Add point
+                        addPoint(skill);
+                        // Optional: keep tooltip open or update it? 
+                        // addPoint re-renders tree, so tooltip might disappear or need re-showing.
+                        // renderTree clears innerHTML, so tooltip (if inside) is gone. 
+                        // But our tooltip is appended to body (line 81), so it persists.
+                        // However, renderTree is called, which might reset things.
+                        // Let's let the re-render happen.
+                    }
+                } else {
+                    // Desktop: Click always adds point
+                    addPoint(skill);
+                }
             });
 
             node.addEventListener('contextmenu', (e) => {
@@ -118,10 +163,22 @@ document.addEventListener('DOMContentLoaded', () => {
                 removePoint(skill);
             });
 
-            // Tooltip
-            node.addEventListener('mouseenter', (e) => showTooltip(e, skill, currentLevel, isLocked));
-            node.addEventListener('mousemove', (e) => moveTooltip(e));
-            node.addEventListener('mouseleave', () => hideTooltip());
+            // Tooltip - Desktop only (mostly)
+            node.addEventListener('mouseenter', (e) => {
+                if (!isTouchDevice()) {
+                    showTooltip(e, skill, currentLevel, isLocked);
+                }
+            });
+            node.addEventListener('mousemove', (e) => {
+                if (!isTouchDevice()) {
+                    moveTooltip(e);
+                }
+            });
+            node.addEventListener('mouseleave', () => {
+                if (!isTouchDevice()) {
+                    hideTooltip();
+                }
+            });
 
             skillTree.appendChild(node);
         });
